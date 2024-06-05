@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: #374151;
+}
+
+.text-main {
+    color: #1F2937;
+}
+
+.bg-main {
+    background-color: #1F2937;
+}
+
+.border-main {
+    border-color: #1F2937;
+}
+
+/* Add positioning styles */
+.container {
+    width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.company-info {
+    flex: 1;
+}
+
+.invoice-details {
+    flex: 1;
+    text-align: right;
+}
+
+.table-container {
+    margin-bottom: 20px;
+}
+
+.footer {
+    text-align: center;
+    font-size: 12px;
+    color: #6b7280;
+}

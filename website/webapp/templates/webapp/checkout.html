@@ -1,0 +1,95 @@
+<style>
+    .line-items-container {
+        width: 410px;
+        height: 72px;
+    }
+
+    .line-items-container th,
+    .line-items-container td {
+        padding: 8px;
+    }
+
+    .total-table {
+        width: 410px;
+        margin-top: 20px;
+    }
+
+    .total-table td {
+        padding: 8px;
+        text-align: right;
+    }
+</style>
+<table class="invoice-info-container" style="width: 674px; height: 140px; padding: 50px;">
+    <tbody>
+        <tr style="height: 18px;">
+            <td class="client-name" style="width: 306.033px; height: 36px;" rowspan="2">{{ username }}</td>
+            <td style="width: 351.967px; height: 18px;">New Bakery</td>
+        </tr>
+        <tr style="height: 18px;">
+            <td style="width: 351.967px; height: 18px;">Koteswor</td>
+        </tr>
+        <tr style="height: 36px;">
+            <td style="width: 306.033px; height: 36px;">Invoice Date: <strong>{{ invoice_date }}</strong></td>
+            <td style="width: 351.967px; height: 36px;">Kathmandu,44600</td>
+        </tr>
+        <tr style="height: 18px;">
+            <td style="width: 306.033px; height: 18px;">Invoice No: <strong>12345</strong></td>
+            <td style="width: 351.967px; height: 18px;">baker@gmail.com</td>
+        </tr>
+    </tbody>
+</table>
+<table class="line-items-container" style="width: 410px; height: 72px;">
+    <thead>
+        <tr style="height: 18px;">
+            <th style="width: 69.1px; height: 18px;"></th>
+            <th style="width: 69.1px; height: 18px;"></th>
+            <th class="heading-quantity" style="width: 0px; height: 18px;">&nbsp;</th>
+            <th class="heading-description" style="width: 109.15px; height: 18px;">Item</th>
+            <th class="heading-price" style="width: 28.7833px; height: 18px;">Qty</th>
+            <th class="heading-subtotal" style="width: 244.067px; height: 18px;">Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in data %}
+        <tr style="height: 18px;">
+            <th style="width: 69.1px; height: 18px;"></th>
+            <th style="width: 69.1px; height: 18px;"></th>
+            <td style="width: 0px; height: 18px;">&nbsp;</td>
+            <td style="width: 109.15px; height: 18px;">{{ item.name }}</td>
+            <td class="right" style="width: 28.7833px; height: 18px;">{{ item.count }}</td>
+            <td class="bold" style="width: 244.067px; height: 18px;">{{ item.subtotal }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<table class="total-table">
+    <tbody>
+        <tr>
+            <td>Total:</td>
+            <td>{{ total }}</td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<br>
+
+<table class="line-items-container has-bottom-border" style="width: 337px;">
+    <tbody>
+        <tr>
+            <td class="payment-info" style="width: 150.1px;">
+                <div></div>
+                <div></div>
+
+                <div>Account No: <strong>123567744</strong></div>
+                <div>Routing No: <strong>120000547</strong></div>
+            </td>
+
+        </tr>
+    </tbody>
+</table>
+<div class="footer">
+<br>
+
+    <div class="footer-info" >hello@useanvil.com | 555 444 6666 | useanvil.com</div>
+    <div class="footer-thanks"><img src="https://github.com/anvilco/html-pdf-invoice-template/raw/main/img/heart.png" alt="heart" />Thank you!</div>
+</div>
