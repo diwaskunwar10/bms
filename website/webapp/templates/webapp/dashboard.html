@@ -1,158 +1,183 @@
 {% extends 'webapp/base.html' %}
 
 {% block content %}
-    <h5> Welcome, {{ user }}! 👋 </h5>
-    <!-- Cart-->
-    <div id="cart-container" class="cartTab">
-        <h1>Shopping Cart</h1>
-        {% csrf_token %}
-        <div class="listCart"></div>
-        <div class="btn">
-            <button class="close" onclick="toggleCart()">CLOSE</button>
-            <button class="checkOut" onclick="checkout()">Check Out</button>
-            <input type="hidden" id="username" value="{{ username }}">
-            <input type="hidden" id="phone" value="{{ phone }}">
+<link rel="stylesheet" href="/website/webapp/templates/webapp/css/style.css">
+<style>
+    .cartTab {
+        position: absolute;
+        /* top: calc(100% + 10px); Position below the cart icon */
+        right: 0;
+        /* Align to the right side */
+        width: 300px;
+        height: auto;
+        /* background-color: #fff; */
+        box-shadow: -2px 0 5px rgba(207, 195, 195, 0.1);
+        z-index: 1000;
+        padding: 1rem;
+        margin-right: 10px;
+
+        overflow-y: auto;
+
+    }
+
+    .card-body {
+        height: auto;
+        /* Set a fixed height for all card bodies */
+    }
+</style>
+<h5> Welcome, {{ user }}! 👋 </h5>
+<!-- Cart-->
+<div id="cart-container" class="cartTab">
+    <h1>Shopping Cart</h1>
+    {% csrf_token %}
+    <div class="listCart"></div>
+    <div class="btn">
+        <button class="close" onclick="toggleCart()">CLOSE</button>
+        <button class="checkOut" onclick="checkout()">Check Out</button>
+        <input type="hidden" id="username" value="{{ username }}">
+        <input type="hidden" id="phone" value="{{ phone }}">
+    </div>
+</div>
+
+{% if data %}
+<div class="row">
+    {% for item in data %}
+    <div class="col-md-4">
+        <div class="card mb-2">
+            <img src="{{ item.image_url }}" class="card-img-top" alt="Product Image"
+                style="width: 100%; border-radius: 10px 10px 0 0;">
+            <div class="card-body">
+                <h5 class="card-title">{{ item.name }}</h5>
+                <p class="card-text">{{ item.description }}</p>
+                <p class="card-text"><strong>Price:</strong> ${{ item.price }}</p>
+                <p class="card-text"><strong>Region:</strong> {{ item.region }}</p>
+                <p class="card-text"><strong>Weight:</strong> {{ item.weight }}g</p>
+                <p class="card-text"><strong>Flavor Profile:</strong> {{ item.flavor_profile|join:", " }}</p>
+                <p class="card-text"><strong>Grind Option:</strong> {{ item.grind_option|join:", " }}</p>
+                <p class="card-text"><strong>Roast Level:</strong> {{ item.roast_level }}</p>
+                <button class="btn btn-primary add-to-cart" data-product-id="{{ item.id }}"
+                    onclick="addToCart(event)">Add to Cart</button>
+            </div>
         </div>
     </div>
-    
-    {% if data %}
-        <h2>API Data</h2>
-        <div class="row">
-            {% for item in data %}
-                <div class="col-md-4">
-                    <div class="card mb-2">
-                        <img src="{{ item.image_url }}" class="card-img-top" alt="Product Image" style="width: 100%; border-radius: 10px 10px 0 0;">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ item.name }}</h5>
-                            <p class="card-text">{{ item.description }}</p>
-                            <p class="card-text"><strong>Price:</strong> ${{ item.price }}</p>
-                            <p class="card-text"><strong>Region:</strong> {{ item.region }}</p>
-                            <p class="card-text"><strong>Weight:</strong> {{ item.weight }}g</p>
-                            <p class="card-text"><strong>Flavor Profile:</strong> {{ item.flavor_profile|join:", " }}</p>
-                            <p class="card-text"><strong>Grind Option:</strong> {{ item.grind_option|join:", " }}</p>
-                            <p class="card-text"><strong>Roast Level:</strong> {{ item.roast_level }}</p>
-                            <button class="btn btn-primary add-to-cart" data-product-id="{{ item.id }}" onclick="addToCart(event)">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p>No data available.</p>
-    {% endif %}
+    {% endfor %}
+</div>
+{% else %}
+<p>No data available.</p>
+{% endif %}
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const addToCartButtons = document.querySelectorAll('.add-to-cart');
-            
-            addToCartButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const productId = this.getAttribute('data-product-id');
-                    const productName = this.parentNode.querySelector('.card-title').textContent;
-                    const productPrice = this.parentNode.querySelector('.card-text:nth-child(3)').textContent.split(':')[1].trim();
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const addToCartButtons = document.querySelectorAll('.add-to-cart');
 
-                    console.log(`Added to cart: ${productName} (ID: ${productId}), Price: $${productPrice}`);
-                });
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const productId = this.getAttribute('data-product-id');
+                const productName = this.parentNode.querySelector('.card-title').textContent;
+                const productPrice = this.parentNode.querySelector('.card-text:nth-child(3)').textContent.split(':')[1].trim();
+
+                console.log(`Added to cart: ${productName} (ID: ${productId}), Price: $${productPrice}`);
             });
         });
+    });
 
-        function toggleCart() {
-            let cartTab = document.querySelector('.cartTab');
-            if (cartTab.style.display === 'none') {
-                cartTab.style.display = 'block';
-            } else {
-                cartTab.style.display = 'none';
-            }
+    function toggleCart() {
+        let cartTab = document.querySelector('.cartTab');
+        if (cartTab.style.display === 'none') {
+            cartTab.style.display = 'block';
+        } else {
+            cartTab.style.display = 'none';
         }
+    }
 
-        let cart = [];
+    let cart = [];
 
-        function addToCart(event) {
-            const productId = event.target.getAttribute('data-product-id');
-            const productName = event.target.closest('.card-body').querySelector('.card-title').textContent;
-            const productPrice = event.target.closest('.card-body').querySelector('.card-text:nth-child(3)').textContent.split(':')[1].trim();
-            
-            const existingItemIndex = cart.findIndex(item => item.id === productId);
-            if (existingItemIndex !== -1) {
-                cart[existingItemIndex].count++;
+    function addToCart(event) {
+        const productId = event.target.getAttribute('data-product-id');
+        const productName = event.target.closest('.card-body').querySelector('.card-title').textContent;
+        const productPrice = event.target.closest('.card-body').querySelector('.card-text:nth-child(3)').textContent.split(':')[1].trim();
+
+        const existingItemIndex = cart.findIndex(item => item.id === productId);
+        if (existingItemIndex !== -1) {
+            cart[existingItemIndex].count++;
+        } else {
+            const cartItem = {
+                id: productId,
+                name: productName,
+                price: productPrice,
+                count: 1
+            };
+            cart.push(cartItem);
+        }
+        updateCart();
+    }
+
+    function increaseCount(productId) {
+        const itemIndex = cart.findIndex(item => item.id === productId);
+        if (itemIndex !== -1) {
+            cart[itemIndex].count++;
+            updateCart();
+        }
+    }
+
+    function decreaseCount(productId) {
+        const itemIndex = cart.findIndex(item => item.id === productId);
+        if (itemIndex !== -1) {
+            if (cart[itemIndex].count === 1) {
+                cart.splice(itemIndex, 1);
             } else {
-                const cartItem = {
-                    id: productId,
-                    name: productName,
-                    price: productPrice,
-                    count: 1
-                };
-                cart.push(cartItem);
+                cart[itemIndex].count--;
             }
             updateCart();
         }
+    }
 
-        function increaseCount(productId) {
-            const itemIndex = cart.findIndex(item => item.id === productId);
-            if (itemIndex !== -1) {
-                cart[itemIndex].count++;
-                updateCart();
-            }
-        }
-
-        function decreaseCount(productId) {
-            const itemIndex = cart.findIndex(item => item.id === productId);
-            if (itemIndex !== -1) {
-                if (cart[itemIndex].count === 1) {
-                    cart.splice(itemIndex, 1);
-                } else {
-                    cart[itemIndex].count--;
-                }
-                updateCart();
-            }
-        }
-
-        function updateCart() {
-            let totalCount = 0;
-            let totalPrice = 0;
-            const iconCartSpan = document.getElementById('cart-count');
-            const cartContainer = document.querySelector('.listCart');
-            cartContainer.innerHTML = '';
-            cart.forEach(item => {
-                totalCount += item.count;
-                totalPrice += parseFloat(item.price.split('$')[1]) * item.count;
-                const cartItem = document.createElement('div');
-                cartItem.classList.add('cart-item');
-                cartItem.setAttribute('data-product-id', item.id);
-                cartItem.innerHTML = `
+    function updateCart() {
+        let totalCount = 0;
+        let totalPrice = 0;
+        const iconCartSpan = document.getElementById('cart-count');
+        const cartContainer = document.querySelector('.listCart');
+        cartContainer.innerHTML = '';
+        cart.forEach(item => {
+            totalCount += item.count;
+            totalPrice += parseFloat(item.price.split('$')[1]) * item.count;
+            const cartItem = document.createElement('div');
+            cartItem.classList.add('cart-item');
+            cartItem.setAttribute('data-product-id', item.id);
+            cartItem.innerHTML = `
                     <span class="cart-item-name">${item.name}</span>
                     <span class="cart-item-price">${item.price}</span>
                     <button class="quantity-button" onclick="decreaseCount('${item.id}')">-</button>
                     <span>${item.count}</span>
                     <button class="quantity-button" onclick="increaseCount('${item.id}')">+</button>
                 `;
-                cartContainer.appendChild(cartItem);
-            });
-            iconCartSpan.textContent = totalCount;
-            const totalElement = document.createElement('div');
-            totalElement.textContent = `Total Price: $${totalPrice.toFixed(2)}`;
-            cartContainer.appendChild(totalElement);
+            cartContainer.appendChild(cartItem);
+        });
+        iconCartSpan.textContent = totalCount;
+        const totalElement = document.createElement('div');
+        totalElement.textContent = `Total Price: $${totalPrice.toFixed(2)}`;
+        cartContainer.appendChild(totalElement);
+    }
+
+    function checkout() {
+        if (cart.length === 0) {
+            alert('Cart is empty');
+            return;
         }
 
-        function checkout() {
-            if (cart.length === 0) {
-                alert('Cart is empty');
-                return;
-            }
+        const cartData = JSON.stringify(cart);
+        const username = document.getElementById('username').value;
+        const phone = document.getElementById('phone').value;
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-            const cartData = JSON.stringify(cart);
-            const username = document.getElementById('username').value;
-            const phone = document.getElementById('phone').value;
-            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-            fetch('/checkout/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': csrftoken,
-                },
-                body: new URLSearchParams({ cart_data: cartData, username: username, phone: phone }),
-            })
+        fetch('/checkout/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrftoken,
+            },
+            body: new URLSearchParams({ cart_data: cartData, username: username, phone: phone }),
+        })
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
@@ -162,7 +187,7 @@
                     newTab.document.open();
                     newTab.document.write(data.html);
                     newTab.document.close();
-                    
+
                     const pdfBlob = new Blob([data.pdf], { type: 'application/pdf' });
                     const pdfUrl = URL.createObjectURL(pdfBlob);
                     const pdfLink = document.createElement('a');
@@ -174,6 +199,6 @@
             .catch(error => {
                 console.error('Error:', error);
             });
-        }
-    </script>
+    }
+</script>
 {% endblock %}

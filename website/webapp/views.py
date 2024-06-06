@@ -21,6 +21,7 @@ from datetime import datetime
 
 
 def home(request):
+    
     return render(request,'webapp/index.html')
 
 
@@ -78,8 +79,15 @@ def dashboard(request):
         return render(request, 'webapp/dashboard.html', {'error': error_message})
     # return render(request,'webapp/dashboard.html',context=data)
 
+import pdfkit
+import base64
+from django.http import JsonResponse
+
+
+    
+
 @csrf_exempt
-def checkout(request):
+async def checkout(request):
     if request.method == 'POST':
         cart_data = request.POST.get('cart_data')
         # username = request.POST.get('username')
@@ -99,13 +107,38 @@ def checkout(request):
             item['subtotal'] = item['price'] * item['count']
         total = sum(item['subtotal'] for item in cart_data_list)
 
-        # Render the checkout template with the processed data
-        html_content = render(request, 'webapp/checkout.html', {'data': cart_data_list, 'total': total,'username':username,'phone':phone,'invoice_date':invoice_date})
-        
-        # Return HTTP response with the HTML content
-        return HttpResponse(html_content)
+        context = {
+        'amount':total,
+        'total_amount':total 
+
+       }
+        response = render(request, 'webapp/cart_esewa.html',context)
+        response_content = "success"
+        # return render(request, 'webapp/cart_esewa.html', context)
+        if response_content == "success":
+
+            # Render the checkout template with the processed data
+            html_content = render(request, 'webapp/checkout.html', {'data': cart_data_list, 'total': total,'username':username,'phone':phone,'invoice_date':invoice_date})
+            
+            # Convert HTML content to PDF
+            pdf_content = pdfkit.from_string(html_content.content.decode(), False)
+            
+            # Save the PDF content to a file if conversion is successful
+            if pdf_content:
+                pdf_filename = 'receipt.pdf'
+                with open(pdf_filename, 'wb') as pdf_file:
+                    pdf_file.write(pdf_content)
+                # Encode PDF content in base64
+                pdf_base64 = base64.b64encode(pdf_content).decode('utf-8')
+                # Return JSON response with HTML and base64-encoded PDF content
+                return JsonResponse({'html': html_content.content.decode()})
+            else:
+                # If conversion fails, return an error response
+                return JsonResponse({'error': 'PDF conversion failed'}, status=500)
     else:
         return redirect('dashboard')
+
+
 
 #logout
 

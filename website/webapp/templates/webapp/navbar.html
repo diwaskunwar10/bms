@@ -1,85 +1,44 @@
+<link rel="stylesheet" href="/website/webapp/templates/webapp/css/style.css">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-between">
+  <a class="navbar-brand main-heading" href="{% url '' %}">ProjectX</a>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-center">
-
-    <a class="navbar-brand main-heading" href="{% url '' %}"> 
-            
-      &nbsp; ProjectX
-    
-    </a>
-  
-  
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-toggle="collapse"
-      data-target="#navbarNavDropdown"
-      aria-controls="navbarNavDropdown"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
-  
-    </button>
-  
-  
-      <div class="collapse navbar-collapse text-center" id="navbarNavDropdown">
-  
-        
-        <ul class="navbar-nav">
-  
-  
-          &nbsp;     &nbsp;     &nbsp; 
-  
+  </button>
+
+  <div class="collapse navbar-collapse text-center" id="navbarNavDropdown">
+      <ul class="navbar-nav mr-auto">
           {% if user.is_authenticated %}
-  
-            <li class="nav-item">
-        
-              <a class="nav-link" href="{% url 'dashboard' %}">Dashboard &nbsp; <i class="fa fa-home" aria-hidden="true"></i> </a>
-  
-            </li>
-  
-  
-            &nbsp;     &nbsp;     &nbsp; 
-  
-  
-            <li class="nav-item">
-  
-              <a class="nav-link" href="{% url 'user-logout' %}">Sign out &nbsp; <i class="fa fa-sign-out" aria-hidden="true"></i> </a>
-  
-            </li>
-            <li class="nav-item ml-auto"> 
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'dashboard' %}">Dashboard &nbsp; <i class="fa fa-home" aria-hidden="true"></i></a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'user-logout' %}">Sign out &nbsp; <i class="fa fa-sign-out" aria-hidden="true"></i></a>
+              </li>
+          {% else %}
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'register' %}">Register</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'login' %}">Login</a>
+              </li>
+          {% endif %}
+      </ul>
+  </div>
+
+  {% if user.is_authenticated %}
+      <ul class="navbar-nav navbar-cartt ml-auto">
+          <li class="nav-item">
               <div class="cart-icon" onclick="toggleCart()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M9 11h6v2H9z"/><path d="M20 6H4l-1 4h18zM2 20c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2s-.9-2-2-2H4c-1.1 0-2 .9-2 2zm16-6c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-4H2V8h2V6c0-2.21 1.79-4 4-4h8c2.21 0 4 1.79 4 4v2h2v2h-3zm-4 2H8v-2h6v2z"/></svg>
-                <div class="cart-count" id="cart-count">0</div>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M9 11h6v2H9z"/><path d="M20 6H4l-1 4h18zM2 20c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2s-.9-2-2-2H4c-1.1 0-2 .9-2 2zm16-6c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-4H2V8h2V6c0-2.21 1.79-4 4-4h8c2.21 0 4 1.79 4 4v2h2v2h-3zm-4 2H8v-2h6v2z"/></svg>
+                  <div class="cart-count" id="cart-count">0</div>
               </div>
-            </li>
-  
-  
-      
-            &nbsp;     &nbsp;     &nbsp; 
-        </ul>
-      
-            {% else %}
-  
-            <li class="nav-item">
-      
-              <a class="nav-link" href="{% url 'register' %}"> Register </a>
-      
-            </li>
-      
-            <li class="nav-item">
-      
-              <a class="nav-link" href="{% url 'login' %}">Login</a>
-      
-            </li>
-  
-  
-        {% endif %}
-      
-      </div>
-  
-  
-  </nav>
-
-
-
+          </li>
+      </ul>
+  {% endif %}
+</nav>
+<style>
+  .navbar-cartt{
+    margin-right: 50px;
+  }
+</style>
